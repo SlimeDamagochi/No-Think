@@ -5,20 +5,29 @@ using UnityEngine;
 public class Player : MonoBehaviour
 {
 
-    int m_HP = 50;
-    int m_attackPoint = 100;
-    public static int m_money = 1000;
-    public int money = 1000;
+    //int m_HP = 50;
+    //int m_attackPoint = 100;
+    public int firstMoney = 1000;
     // int* food = new int[4];
-    public int food0 = 0;
-    public int food1 = 0;
-    public int food2 = 0;
-    public int food3 = 0;
+    public int firstFood = 0;
+    public int basicFood;
+    public int middleFood;
+    public int higherFood;
+    public int veryFood;
+    public int playerMoney;
 
-    Player(int HP = 50, int attckPoint = 100, int m_money = 1000)
+    private void Awake()
     {
-        m_HP = HP;
-        m_attackPoint = attckPoint;
-        m_money = money;
+        initiate();
     }
+
+    void initiate()
+    { 
+        basicFood = PlayerPrefs.GetInt("basicfood", 0); 
+        middleFood = PlayerPrefs.GetInt("middlefood", 0);
+        higherFood = PlayerPrefs.GetInt("higherfood", 0);
+        veryFood = PlayerPrefs.GetInt("veryfood", 0);
+        playerMoney = PlayerPrefs.GetInt("playermoney", 1000);
+    }
+
 }

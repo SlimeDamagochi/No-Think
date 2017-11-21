@@ -7,36 +7,37 @@ public class Slime : MonoBehaviour
 {
 
     public Text stateText;
-    public GameObject player;
-    Player playerScript;
-    GameObject slimePoo;
+    public Player player;
+    SlimePooController slimePoo;
 
-
-    int a = 0;
-    int achetime = 0;
-    float nextTime = 60;
-    static public int m_stomach = 100; //포만감
+    public int m_stomach = 100; //포만감
+    public int m_health = 0; // 건강상태 1. 정상 2. 배탈 3. 감기
+    public int m_HP = 100; // 체력
+    public int foodNum = 0; // 먹은 음식 숫자
     int m_level = 1; // 레벨에 따라서 스탯증가
-    static public int m_health = 0; // 건강상태 1. 정상 2. 배탈 3. 감기
-    static public int m_HP = 100; // 체력
     int m_attackPoint = 0; // 공격력(지금은 안씀)
-    static public int foodNum = 0; // 먹은 음식 숫자
 
-    Slime(int stomach = 100, int level = 1, int health = 0, int HP = 100, int attackPoint = 0)
+    float nextTime = 60;
+    int achetime = 0;
+
+    private void Awake()
     {
-        m_stomach = stomach;
-        m_level = level;
-        m_health = health;
-        m_HP = HP;
-        m_attackPoint = attackPoint;
+        initiate(); 
     }
 
+    void initiate()
+    {
+        m_stomach = PlayerPrefs.GetInt("stomach", 100);
+        m_level = PlayerPrefs.GetInt("level", 1);
+        m_health = PlayerPrefs.GetInt("health", 0);
+        m_HP = PlayerPrefs.GetInt("HP", 100);
+        m_attackPoint = PlayerPrefs.GetInt("attackPoint", 0);
+        foodNum = PlayerPrefs.GetInt("foodnum", 0);
+    }
 
     private void Start()
     {
-
-        playerScript = player.GetComponent<Player>();
-        stateText.text = "money: " + Player.m_money + "                     HP: " + m_HP + "                        hurgry: " + m_stomach;
+        stateText.text = " money: " + player.playerMoney + "\n HP: " + m_HP + "\n hurgry: " + m_stomach;
     }
 
     private void Update()
@@ -46,7 +47,7 @@ public class Slime : MonoBehaviour
             hungry();
             ache();
 
-            stateText.text = "money: " + Player.m_money + "                      HP: " + m_HP + "                            hurgry: " + m_stomach;
+            stateText.text = "money: " + player.playerMoney + "\n HP: " + m_HP + "\n hurgry: " + m_stomach;
             //
         }
 
@@ -67,13 +68,17 @@ public class Slime : MonoBehaviour
     {
         if (m_stomach > 0)
         {
-
             m_stomach--;
+            PlayerPrefs.SetInt("stomach", m_stomach);
+            PlayerPrefs.Save();
         }
         else if ((m_stomach < 20) && (m_stomach > 0))
         {
             m_HP--;
             m_stomach--;
+            PlayerPrefs.SetInt("HP", m_HP);
+            PlayerPrefs.SetInt("stomach", m_stomach);
+            PlayerPrefs.Save();
             return;
         }
         else if (m_stomach <= 0)
@@ -88,14 +93,14 @@ public class Slime : MonoBehaviour
         {
             case 0: break;
             case 1:
-                Slime.m_HP = Slime.m_HP - 2;           //배탈
-                Slime.m_stomach = Slime.m_stomach - 3;
+                m_HP = m_HP - 2;           //배탈
+                m_stomach = m_stomach - 3;
                 break;
             case 2:
                 m_HP--;                    //감기
                 break;
             case 3: // 많이아픔
-                Slime.m_HP = m_HP - 3;
+                m_HP = m_HP - 3;
                 break;
             default:
                 Debug.Log("slime_ache_Bug");
@@ -116,6 +121,8 @@ public class Slime : MonoBehaviour
     void levelup()
     {
         m_level++;
+        PlayerPrefs.SetInt("level", m_level);
+        PlayerPrefs.Save();
     }
 
     public void testfood()
@@ -129,13 +136,13 @@ public class Slime : MonoBehaviour
         switch (myFood)
         {
             case 1:// 30프로 확률로 배탈 , 음식물 쓰레기
-                if (playerScript.food0 > 0)
+                if (player.basicFood > 0)
                 {
-                    Debug.Log(Player.m_money);
-                    Debug.Log(playerScript.food0);
-                    playerScript.food0--;
-                    Slime.m_HP = Slime.m_HP + 5;
-                    m_stomach = Slime.m_stomach + 30;
+                    Debug.Log(player.playerMoney);
+                    Debug.Log(player.basicFood);
+                    player.basicFood--;
+                    m_HP = m_HP + 5;
+                    m_stomach = m_stomach + 30;
                     if ((int)(Random.Range(0, 3) % 3) == 1)
                     {
                         m_health = 1;
@@ -144,28 +151,28 @@ public class Slime : MonoBehaviour
                 }
                 break;
             case 2://일반사료
-                if (playerScript.food1 > 0)
+                if (player.middleFood > 0)
                 {
                     m_HP = m_HP + 5;
                     m_stomach = m_stomach + 20;
-                    playerScript.food1--;
+                    player.middleFood--;
                     foodNum++;
                 }
                 break;
             case 3: //고급사료
-                if (playerScript.food2 > 0)
+                if (player.higherFood > 0)
                 {
-                    playerScript.food2--;
+                    player.higherFood--;
                     m_HP = m_HP + 10;
                     m_stomach = m_stomach + 30;
                     foodNum++;
                 }
                 break;
             case 4: // 포션
-                if (playerScript.food3 > 0)
+                if (player.veryFood > 0)
                 {
                     m_HP = m_HP + 20;
-                    playerScript.food3--;
+                    player.veryFood--;
                     foodNum++;
                 }
                 break;
@@ -180,7 +187,6 @@ public class Slime : MonoBehaviour
 
     void Poo()
     {
-        
         if(foodNum == 4)
         {
             // SlimePooController 스크립트를 만들기. 

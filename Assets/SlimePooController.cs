@@ -16,7 +16,16 @@ public class SlimePooController : MonoBehaviour {
         int randomY = Random.Range(-3, -1);
         slimePoo.transform.position = new Vector2(randomX, randomY);
         slimePoo.SetActive(true);
+    }
 
+    void slimePooIsInstance()
+    {
+        Instantiate(slimePoo);
+        isMaked = true;
+        int randomX = Random.Range(-1, 0);
+        int randomY = Random.Range(-3, -1);
+        slimePoo.transform.position = new Vector2(randomX, randomY);
+        slimePoo.SetActive(true);
     }
 
     void slimeIsPood()
@@ -25,25 +34,23 @@ public class SlimePooController : MonoBehaviour {
         switch (mySlime.getFoodnum())
         {
             case 1:
-                slimePoo.SetActive(true);
-                isMaked = false;
-                mySlime.setFoodNum();
+               
                 break;
             case 2:
-                slimePoo.SetActive(true);
-                isMaked = false;
+                
                 slimePoo.transform.localScale += new Vector3(1, 1);
-                mySlime.setFoodNum();
+                
                 break;
             case 3:
-                slimePoo.SetActive(true);
-                isMaked = false;
+                
                 slimePoo.transform.localScale += new Vector3(2, 2);
-                mySlime.setFoodNum();
+               
                 break;
             default:
                 break;
          }
+        isMaked = false;
+        mySlime.setFoodNum();
     }
 
 	
