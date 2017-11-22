@@ -4,55 +4,80 @@ using UnityEngine;
 
 public class SlimePooController : MonoBehaviour {
 
-    public GameObject slimePoo;
-    bool isMaked = false; // 
+    public GameObject slimePoo; 
     public Slime mySlime;
+    public int nextIndex;
+    // 다음에 쌀 똥의 Index
+    GameObject[] slimePoos;
 
-	void Start()
+    private void Awake()
     {
-        Instantiate(slimePoo);
-        isMaked = true;
-        int randomX = Random.Range(-1, 0);
-        int randomY = Random.Range(-3, -1);
-        slimePoo.transform.position = new Vector2(randomX, randomY);
-        slimePoo.SetActive(true);
+        slimePoos = new GameObject[10]; 
+      
+        for(int i = 0; i < 10; i++)
+        {
+            slimePoos[i] = Instantiate(slimePoo, new Vector2(100, 100), Quaternion.identity);
+            Debug.Log("slime is instantiate");
+            slimePoos[i].transform.position = new Vector2(100, 100);
+            slimePoos[i].SetActive(false);
+        }
     }
 
-    void slimePooIsInstance()
+    void Start()
     {
-        Instantiate(slimePoo);
-        isMaked = true;
-        int randomX = Random.Range(-1, 0);
-        int randomY = Random.Range(-3, -1);
-        slimePoo.transform.position = new Vector2(randomX, randomY);
-        slimePoo.SetActive(true);
+        nextIndex = PlayerPrefs.GetInt("nextindex", 0);
     }
 
-    void slimeIsPood()
+    void slimePooInstance()
     {
-        slimePoo.SetActive(true);
-        switch (mySlime.getFoodnum())
+        if (nextIndex < 10) // 10개 넘게싸면 생성 못함.
+        {
+            int randomX = Random.Range(-1, 0);
+            int randomY = Random.Range(-3, -1);
+            slimePoos[nextIndex].transform.position = new Vector2(randomX, randomY);
+            slimePoos[nextIndex].SetActive(true);
+            // 다음 똥을 켜줌
+
+            nextIndex++;
+            PlayerPrefs.SetInt("nextindex", nextIndex);
+            PlayerPrefs.Save();
+        }
+        if(nextIndex == 10)
+        {
+            Debug.Log("10개 다 쌈");
+        }
+    }
+
+    public void slimeIsPood() 
+    {
+        switch (mySlime.foodNum)
         {
             case 1:
                
                 break;
             case 2:
                 
-                slimePoo.transform.localScale += new Vector3(1, 1);
+                slimePoos[nextIndex].transform.localScale += new Vector3(1, 1);
                 
                 break;
             case 3:
                 
-                slimePoo.transform.localScale += new Vector3(2, 2);
+                slimePoos[nextIndex].transform.localScale += new Vector3(2, 2);
                
                 break;
             default:
                 break;
          }
-        isMaked = false;
-        mySlime.setFoodNum();
+        if (nextIndex >= 0) // safety
+        {
+            slimePooInstance();
+        }
+        mySlime.FoodNumInitiate();
     }
 
-	
+	public void SweepPoo() // 똥 치우는 코드
+    {
+
+    }
 
 }
