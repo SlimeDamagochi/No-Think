@@ -9,6 +9,7 @@ public class SlimePooController : MonoBehaviour {
     public int nextIndex;
     // 다음에 쌀 똥의 Index
     GameObject[] slimePoos;
+    Sweep sweepController;
 
     private void Awake()
     {
@@ -21,11 +22,18 @@ public class SlimePooController : MonoBehaviour {
             slimePoos[i].transform.position = new Vector2(100, 100);
             slimePoos[i].SetActive(false);
         }
+        nextIndex = PlayerPrefs.GetInt("nextindex", 0);
     }
 
     void Start()
     {
-        nextIndex = PlayerPrefs.GetInt("nextindex", 0);
+        for (int i = 0; i < nextIndex; i++)
+        {
+            int randomX = Random.Range(-1, 0);
+            int randomY = Random.Range(-3, -1);
+            slimePoos[i].transform.position = new Vector2(randomX, randomY);
+            slimePoos[i].SetActive(true);
+        }
     }
 
     void slimePooInstance()
@@ -77,7 +85,17 @@ public class SlimePooController : MonoBehaviour {
 
 	public void SweepPoo() // 똥 치우는 코드
     {
-
+        if(sweepController.duringSweep == true)
+        {
+            slimePoos[nextIndex - 1].SetActive(false);
+            nextIndex--;
+            PlayerPrefs.SetInt("nextindex", nextIndex);
+            PlayerPrefs.Save();
+        }
     }
 
+    public void OnMouseDown()
+    {
+        SweepPoo();
+    }
 }

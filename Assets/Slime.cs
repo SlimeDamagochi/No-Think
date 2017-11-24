@@ -7,6 +7,8 @@ public class Slime : MonoBehaviour
 {
 
     public Text stateText;
+    public Text levelText;
+    public Text FoodText;
     public Player player;
     SlimePooController slimePooController;
 
@@ -17,8 +19,8 @@ public class Slime : MonoBehaviour
     int m_level = 1; // 레벨에 따라서 스탯증가
     int m_attackPoint = 0; // 공격력(지금은 안씀)
 
-    float nextTime = 60;
     int achetime = 0;
+    float pooTime = 30;
 
     private void Awake()
     {
@@ -37,7 +39,7 @@ public class Slime : MonoBehaviour
 
     private void Start()
     {
-        stateText.text = " money: " + player.playerMoney + "\n HP: " + m_HP + "\n hurgry: " + m_stomach;
+        UIUpdate();
     }
 
     private void Update()
@@ -51,9 +53,9 @@ public class Slime : MonoBehaviour
             //
         }
 
-        if (Time.time >= nextTime)
+        if (Time.time >= pooTime)
         {
-            nextTime = Time.time + nextTime;
+            pooTime = Time.time + pooTime;
             Poo();
         }
     }
@@ -119,14 +121,14 @@ public class Slime : MonoBehaviour
         }
     }
 
-    void levelup()
+    void Levelup()
     {
         m_level++;
         PlayerPrefs.SetInt("level", m_level);
         PlayerPrefs.Save();
     }
 
-    public void testfood()
+    public void Testfood()
     {
         eat(1);
     }
@@ -188,13 +190,10 @@ public class Slime : MonoBehaviour
 
     void Poo()
     {
-        if(foodNum == 4)
+        if (foodNum >= 1)
         {
             slimePooController.slimeIsPood();
         }
-        foodNum = 0;
-        PlayerPrefs.SetInt("foodnum", 0);
-        PlayerPrefs.Save();
     }
 
     public int GetFoodnum()
@@ -202,10 +201,17 @@ public class Slime : MonoBehaviour
         return PlayerPrefs.GetInt("foodnum", 0);
     }
 
-    public void FoodNumInitiate()
+    public void FoodNumInitiate() // 이건 SlimePooController에서 해줌.
     {
         foodNum = 0;
         PlayerPrefs.SetInt("foodnum", foodNum);
         PlayerPrefs.Save();
+    }
+
+    public void UIUpdate()
+    {
+        stateText.text = "money: " + player.playerMoney + "\nHP: " + m_HP + "\nhurgry: " + m_stomach;
+        levelText.text = "Level: " + m_level;
+        FoodText.text = "BasicFood: " + player.Foods[0] + " MiddleFood: " + player.Foods[1] + "\nHigherFood: " + player.Foods[2] + " VeryFood: " + player.Foods[3];
     }
 }

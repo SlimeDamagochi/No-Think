@@ -1,20 +1,11 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class Shop : MonoBehaviour
 {
     public Player player;
-    
-  private void Start()
-    {
-
-    }
-
-    private void Update()
-    {
-
-    }
 
     public void purchase1()
     {
@@ -32,7 +23,7 @@ public class Shop : MonoBehaviour
 
     public void purchase2()
     {
-        if (player.playerMoney >= 200)// 스태틱은 안쓰는게좋음
+        if (player.playerMoney >= 200)
         {
             player.SetMoney(player.playerMoney - 200);
             player.SetFood(Player.Food.MIDDLE, player.Foods[(int)Player.Food.MIDDLE] + 1);
@@ -42,7 +33,7 @@ public class Shop : MonoBehaviour
     }
     public void purchase3()
     {
-        if(player.playerMoney >= 300)// 스태틱은 안쓰는게좋음
+        if(player.playerMoney >= 300)
         {
             player.SetMoney(player.playerMoney - 300);
             player.SetFood(Player.Food.HIGHER, player.Foods[(int)Player.Food.HIGHER] + 1);
@@ -78,6 +69,17 @@ public class Shop : MonoBehaviour
         Application.LoadLevel("menu1");
     }
 
-    SceneManagement 쓰는 방법도 생각해 보는게 좋을 것 같아서 일단 보류.
+    이게 예전 문법이라 SceneManagement로 바꾸겠음.
 */
+
+    public void InShop()
+    {
+        SceneManager.LoadScene("shop");
+    }
+
+    public void GotoMain()
+    {
+        SceneManager.LoadScene("main");
+    }
+
 }

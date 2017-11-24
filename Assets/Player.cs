@@ -14,8 +14,19 @@ public class Player : MonoBehaviour
     public enum Food {BASIC = 0 ,MIDDLE, HIGHER, VERY};
     // BASIC = 0, MIDDLE = 1, HIGHER = 2, VERY = 3
 
+    public static Player instance = null;
     private void Awake()
     {
+        if(instance == null)
+        {
+            instance = this;
+        }
+        else if(instance != this)
+        {
+            Destroy(gameObject);
+        }
+        DontDestroyOnLoad(gameObject);
+
         initiate();
     }
 
@@ -28,7 +39,7 @@ public class Player : MonoBehaviour
         playerMoney = PlayerPrefs.GetInt("playermoney", firstMoney);
     }
 
-    public void SetMoney(int settingMoney) // Set했을 땐 Get을 써서 꼭 변수를 초기화해주자.
+    public void SetMoney(int settingMoney) // Set했을 땐 꼭 변수도 같이 초기화해주자.
     {
         PlayerPrefs.SetInt("playermoney", settingMoney);
         PlayerPrefs.Save();
